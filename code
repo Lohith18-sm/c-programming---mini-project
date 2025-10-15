@@ -1,0 +1,42 @@
+int leds[] = {2, 3, 4, 5};  // LEDs connected to digital pins 2 to 6
+int numLeds = 4;
+const int trigPin = 7;
+const int echoPin = 8;
+long readUltrasonicDistance(int triggerPin, int echoPin)
+{
+  pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  pinMode(echoPin, INPUT);
+  return pulseIn(echoPin, HIGH);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  for (int i = 0; i < numLeds; i++) {
+    pinMode(leds[i], OUTPUT);  // Set all LED pins as outputs
+  }
+}
+void loop()
+{
+  long duration = readUltrasonicDistance(trigPin, echoPin);
+  int cm = 0.01723 * duration;
+  int inches = cm / 2.54;
+  Serial.print(inches);
+  Serial.print("in, ");
+  Serial.print(cm);
+  Serial.println("cm");
+  // Turn on LEDs based on increments of 20 cm distance
+  for (int i = 0; i < numLeds; i++) {
+    if (cm >= i * 20 && cm < (i + 1) * 20) {
+      digitalWrite(leds[i], HIGH);
+    } else {
+      digitalWrite(leds[i], LOW);
+  	}
+  }
+  delay(100);
+}________________________________________
